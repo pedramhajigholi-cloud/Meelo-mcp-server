@@ -7,6 +7,18 @@ Once connected to any MCP-aware client, you can ask questions like *"What's
 Pedram cooking for dinner tonight?"* or *"Show me the recipe for the salmon
 dish"* and the client calls into this server to fetch the answer.
 
+## Demo
+
+![Claude Desktop calling the Meelo MCP server](./demo.png)
+
+Claude Desktop calling the Meelo MCP server's `get_meal_plan` and
+`get_recipe` tools. The recipe title, description ("Picked by Meelo
+because you rate fish dishes highly..."), ingredients, steps, and chef
+note all come from the MCP server. Claude Desktop renders the
+structured data as an interactive recipe card, with cooking timers
+auto-detected from the step text and related images pulled via its
+built-in web search.
+
 ## Compatible clients
 
 This server speaks pure MCP over stdio — it works with **any** MCP-aware
