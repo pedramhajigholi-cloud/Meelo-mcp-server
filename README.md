@@ -3,9 +3,29 @@
 Exposes [Meelo](https://meelo-chef.lovable.app) — an AI chef app — as
 tools that any MCP-aware LLM client (Claude Desktop, Claude Code) can query.
 
-Once configured, you can ask Claude things like *"What's Pedram cooking for
-dinner tonight?"* or *"Show me the recipe for the salmon dish"* and Claude
-calls into this server to fetch the answer.
+Once connected to any MCP-aware client, you can ask questions like *"What's
+Pedram cooking for dinner tonight?"* or *"Show me the recipe for the salmon
+dish"* and the client calls into this server to fetch the answer.
+
+## Compatible clients
+
+This server speaks pure MCP over stdio — it works with **any** MCP-aware
+client, not just Claude Desktop:
+
+| Client | Type |
+| --- | --- |
+| [Claude Desktop](https://claude.ai/download) | Mac / Windows desktop app |
+| [Claude Code](https://docs.claude.com/en/docs/claude-code) | Terminal CLI |
+| [Cursor](https://cursor.com) | AI code editor (Mac / Win / Linux) |
+| [Zed](https://zed.dev) | Code editor with native MCP support |
+| [Cline](https://github.com/cline/cline) | VS Code extension |
+| [Continue.dev](https://continue.dev) | VS Code / JetBrains extension |
+| [Goose](https://block.github.io/goose/) | CLI agent from Block |
+| [MCP Inspector](https://github.com/modelcontextprotocol/inspector) | Terminal/web tool for testing servers directly — no LLM needed |
+
+Setup below shows Claude Desktop and the MCP Inspector (the easiest two for a
+quick demo). Other clients follow the same pattern — point them at the
+`command` + `args` defined in the "Use with Claude Desktop" section.
 
 ## What this is
 
@@ -109,16 +129,51 @@ Add a `meelo` entry under `mcpServers`. Replace `<ABSOLUTE_PATH_TO_REPO>` with t
 
 **Restart Claude Desktop completely** (Cmd+Q / fully quit, then reopen — closing the window isn't enough). The Meelo tools should now be available.
 
+## Test from the terminal (no LLM client needed)
+
+Don't want to set up Claude Desktop just to try the server? You can call the
+tools directly with Anthropic's official **MCP Inspector** — runs in your
+browser, opens automatically:
+
+```bash
+cd meelo-mcp-server
+source venv/bin/activate         # macOS / Linux
+# .\venv\Scripts\Activate.ps1    # Windows
+
+npx @modelcontextprotocol/inspector python3 server.py
+```
+
+This launches a small local web UI where you can:
+- See the three tools listed (`get_meal_plan`, `get_recipe`, `get_taste_profile`)
+- Click any tool, enter arguments, and inspect the JSON response in real time
+- Verify the server works end-to-end without needing an LLM at all
+
+Great for debugging or for showing the server runs to someone who doesn't
+have an MCP-aware AI client installed.
+
+## Use with other MCP clients
+
+The same `command` + `args` from the Claude Desktop section above plugs
+into any MCP-aware client:
+
+- **Cursor:** Settings → Features → MCP → add the same `command` + `args`
+- **Zed:** `~/.config/zed/settings.json` → `experimental.assistant.mcp_servers`
+- **Cline / Continue.dev:** their extension settings have an MCP servers panel
+- **Goose:** `~/.config/goose/profiles.yaml` → add a `meelo` entry
+
+Refer to each client's docs for the exact config field — the `command`
+and `args` values stay the same.
+
 ## Try it
 
-In a new Claude Desktop conversation, try any of these:
+In a new Claude Desktop (or other MCP client) conversation, try any of these:
 
 - *"Use the meelo MCP server to tell me what Pedram is cooking this week."*
 - *"What's for dinner tonight in Meelo, and what's the recipe?"*
 - *"What's for dinner tomorrow?"*
 - *"What food does Pedram love?"*
 
-Claude will call the relevant tool(s) and answer using data returned by the server.
+The client will call the relevant tool(s) and answer using data returned by the server.
 
 ## Troubleshooting
 
