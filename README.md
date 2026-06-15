@@ -5,7 +5,7 @@ tools that any MCP-aware LLM client (Claude Desktop, Claude Code) can query.
 
 Once configured, you can ask Claude things like *"What's Pedram cooking for
 dinner tonight?"* or *"Show me the recipe for the salmon dish"* and Claude
-calls into this server to get the real answer.
+calls into this server to fetch the answer.
 
 ## What this is
 
@@ -66,20 +66,22 @@ Restart Claude Desktop. The Meelo tools should appear in the tools menu.
 In Claude Desktop, ask any of these:
 
 - *"What's Pedram cooking this week?"*
-- *"What's for dinner tonight?"*
-- *"Show me the recipe for the salmon."*
+- *"What's for dinner tonight, and what's in the recipe?"*
+- *"What's for dinner tomorrow?"*
 - *"What food does Pedram love?"*
 
-Claude will call the relevant tool(s) and answer with real data from this server.
+Claude will call the relevant tool(s) and answer using data returned by the server.
 
 ## Why I built it
 
-To make Meelo's data accessible to *any* MCP-aware AI client — not just the
-app itself. The bet: meal planning isn't a destination, it's a context, and
-that context should travel with the user across their AI tools.
+Two reasons:
 
-Also as a portfolio piece — a working, defensible MCP integration shipped
-end-to-end (server + tools + Claude Desktop config + live demo).
+1. **To make Meelo's data accessible to any MCP-aware AI client** — not just
+   the Meelo app itself. If meal planning lives in one app and your AI
+   assistant lives in another, MCP is what lets them talk.
+2. **As a portfolio piece** — a working, end-to-end MCP integration:
+   server, tools, Claude Desktop wiring, and a live demo. Built and shipped
+   in a focused session.
 
 ## Roadmap
 
