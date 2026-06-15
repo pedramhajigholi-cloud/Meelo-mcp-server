@@ -32,45 +32,112 @@ is a one-line change inside each tool.
 
 No web server, no database (yet — mock data v1), no external services.
 
-## Setup
+## Quick start
+
+You need **Python 3.11 or newer** and **git**. Run these commands in a terminal:
 
 ```bash
+# 1. Clone the repo
 git clone https://github.com/pedramhajigholi-cloud/meelo-mcp-server.git
 cd meelo-mcp-server
 
+# 2. Create a virtual environment
 python3 -m venv venv
+
+# 3. Activate it
+#    macOS / Linux:
 source venv/bin/activate
+#    Windows (PowerShell):
+#    .\venv\Scripts\Activate.ps1
+
+# 4. Install dependencies
 pip install -r requirements.txt
 ```
 
-## Add to Claude Desktop
+### Verify it works
 
-Edit `~/Library/Application Support/Claude/claude_desktop_config.json`
-and add a `meelo` entry under `mcpServers`:
+After the install, run this one-liner to confirm the server loads and registers its tools:
+
+```bash
+python3 -c "import asyncio, server; tools = asyncio.run(server.app.list_tools()); print(f'✅ Meelo MCP server ready — {len(tools)} tools registered:'); [print(f'   • {t.name}') for t in tools]"
+```
+
+You should see:
+
+```
+✅ Meelo MCP server ready — 3 tools registered:
+   • get_meal_plan
+   • get_recipe
+   • get_taste_profile
+```
+
+If you do, setup is done — now wire it into your MCP client.
+
+## Use with Claude Desktop
+
+Open Claude Desktop's config file in a text editor:
+
+- **macOS:** `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows:** `%APPDATA%\Claude\claude_desktop_config.json`
+- **Linux:** `~/.config/Claude/claude_desktop_config.json`
+
+Add a `meelo` entry under `mcpServers`. Replace `<ABSOLUTE_PATH_TO_REPO>` with the full path where you cloned this repo (you can get it by running `pwd` inside the repo folder on macOS/Linux, or `cd` on Windows).
 
 ```json
 {
   "mcpServers": {
     "meelo": {
-      "command": "/absolute/path/to/meelo-mcp-server/venv/bin/python3",
-      "args": ["/absolute/path/to/meelo-mcp-server/server.py"]
+      "command": "<ABSOLUTE_PATH_TO_REPO>/venv/bin/python3",
+      "args": ["<ABSOLUTE_PATH_TO_REPO>/server.py"]
     }
   }
 }
 ```
 
-Restart Claude Desktop. The Meelo tools should appear in the tools menu.
+**On Windows**, the paths use backslashes and the Python binary is in `venv\Scripts\python.exe`:
+
+```json
+{
+  "mcpServers": {
+    "meelo": {
+      "command": "C:\\Users\\you\\meelo-mcp-server\\venv\\Scripts\\python.exe",
+      "args": ["C:\\Users\\you\\meelo-mcp-server\\server.py"]
+    }
+  }
+}
+```
+
+**Restart Claude Desktop completely** (Cmd+Q / fully quit, then reopen — closing the window isn't enough). The Meelo tools should now be available.
 
 ## Try it
 
-In Claude Desktop, ask any of these:
+In a new Claude Desktop conversation, try any of these:
 
-- *"What's Pedram cooking this week?"*
-- *"What's for dinner tonight, and what's in the recipe?"*
+- *"Use the meelo MCP server to tell me what Pedram is cooking this week."*
+- *"What's for dinner tonight in Meelo, and what's the recipe?"*
 - *"What's for dinner tomorrow?"*
 - *"What food does Pedram love?"*
 
 Claude will call the relevant tool(s) and answer using data returned by the server.
+
+## Troubleshooting
+
+**The Meelo tools don't appear in Claude Desktop.**
+
+1. Check Claude Desktop's MCP log to see if the server actually started:
+   - macOS: `~/Library/Logs/Claude/mcp-server-meelo.log`
+   - Look for the line `Server started and connected successfully`
+2. Make sure you **fully quit** Claude Desktop and reopened it. Just closing the window doesn't reload the config.
+3. Verify the paths in `claude_desktop_config.json` are absolute (no `~` or relative paths).
+4. Run the "Verify it works" command above to confirm Python can still import the server.
+
+**`pip install` fails with an SSL or network error.**
+
+Update pip first: `pip install --upgrade pip`, then retry. If you're on a corporate network, you may need to use `--proxy <url>`.
+
+**I want to use this with a different MCP client (not Claude Desktop).**
+
+Any client that supports stdio-transport MCP servers will work. Point its server config at the same `command` and `args` shown above. The server speaks pure MCP — no client-specific quirks.
 
 ## Why I built it
 
