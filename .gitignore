@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+
+# Virtual envs
+venv/
+.venv/
+env/
+
+# Env files (never commit secrets)
+.env
+.env.local
+
+# OS / IDE
+.DS_Store
+.vscode/
+.idea/
