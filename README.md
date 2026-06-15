@@ -52,6 +52,22 @@ is a one-line change inside each tool.
 
 No web server, no database (yet — mock data v1), no external services.
 
+## Local vs remote
+
+MCP supports two transport types:
+
+- **stdio (this server, v1)** — runs *on your machine* as a subprocess that the
+  MCP client launches when it starts. Simplest possible setup. Zero hosting cost.
+- **HTTP / SSE** — runs as a hosted web service that any MCP client can
+  connect to over the internet. Example: PostHog's MCP server at
+  `https://mcp.posthog.com/sse`.
+
+This server uses **stdio** because the goal of v1 was to ship the protocol
+end-to-end, not to operate hosted infrastructure. Making it remote is a
+planned v3 (see Roadmap below): add an HTTP/SSE transport in the `mcp` SDK,
+deploy to Fly.io or Render, add auth, and the same tools become reachable
+worldwide via a single URL.
+
 ## Quick start
 
 You need **Python 3.11 or newer** and **git**. Run these commands in a terminal:
@@ -207,10 +223,11 @@ Two reasons:
 
 ## Roadmap
 
-- **v1 (current):** Read-only tools backed by mock data
+- **v1 (current):** Read-only tools backed by mock data, stdio transport (local only)
 - **v2:** Wire `get_meal_plan` to live Supabase data from Meelo's production project
-- **v3:** Add write tools (`add_to_grocery`, `mark_cooked`) — needs auth design
-- **v4:** Real-time updates via MCP notifications
+- **v3:** Add HTTP/SSE transport + deploy to Fly.io or Render so it's reachable remotely. Adds OAuth for auth so it isn't open to the world.
+- **v4:** Add write tools (`add_to_grocery`, `mark_cooked`) — depends on v3 auth design
+- **v5:** Real-time updates via MCP notifications
 
 ## License
 
